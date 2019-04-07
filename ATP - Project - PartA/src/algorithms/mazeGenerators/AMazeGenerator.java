@@ -1,5 +1,6 @@
 package algorithms.mazeGenerators;
 
+///test-test
 
 public abstract class AMazeGenerator implements IMazeGenerator {
 
