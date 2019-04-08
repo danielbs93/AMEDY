@@ -133,7 +133,7 @@ public class MyMazeGenerator extends AMazeGenerator {
         columnEnd = (int) (Math.random() * column);
         /////random cell
         //start position and end position are diffrent
-        while (mazeArray[rowEnd][columnEnd] !=0 && rowEnd!=rowStart && columnEnd!=columnStart) {
+        while ((mazeArray[rowEnd][columnEnd] !=0) || (rowEnd==rowStart && columnEnd==columnStart)) {
             rowEnd = (int) (Math.random() * row);
             columnEnd = (int) (Math.random() * column);
         }
@@ -210,5 +210,6 @@ public class MyMazeGenerator extends AMazeGenerator {
         return neighborsCells;
     }
 }
+
 
 
