@@ -12,12 +12,7 @@ public abstract class AState implements Comparable<AState> {
     public AState() {
         cameFrom = null;
     }
-
-
-    //protected abstract boolean isCell(ISearchable maze);
-
-  // protected abstract ArrayList<AState> getNighbors(ISearchable maze); ////remove
-
+    
     public abstract void setCost(double cost);
 
     public abstract void setCameFrom(AState cameFrom);
@@ -53,9 +48,11 @@ public abstract class AState implements Comparable<AState> {
     @Override
     public int compareTo(AState o) {
         if ((o).getCost() > this.getCost())
-            return 0;
+            return 1;
+        if ((o).getCost() < this.getCost())
+            return -1;
 
-        return 1;
+        return 0;
     }
 
 
