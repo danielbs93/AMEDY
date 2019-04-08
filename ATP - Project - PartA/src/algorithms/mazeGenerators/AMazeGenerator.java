@@ -27,9 +27,13 @@ public abstract class AMazeGenerator implements IMazeGenerator {
      * @return long. This returns the time that took to generate the maze.
      */
     public long measureAlgorithmTimeMillis (int row, int column){
-        long startTime = System.currentTimeMillis();
-        generate(row,column);
 
+        //measures the system clock before generate the maze
+        long startTime = System.currentTimeMillis();
+
+        //generate the maze
+        generate(row,column);
+        //measures the system clock after generate the maze
         long endTime = System.currentTimeMillis();
 
         return endTime-startTime;
