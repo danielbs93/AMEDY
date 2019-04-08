@@ -9,7 +9,7 @@ public class BestFirstSearch extends BreadthFirstSearch {
 
     public BestFirstSearch() {
         visitedPosition = new HashSet<>();
-        statesQueue = new PriorityQueue<>();
+        statesQueue = new PriorityQueue<>(AState::compareTo);
     }
 
     @Override
