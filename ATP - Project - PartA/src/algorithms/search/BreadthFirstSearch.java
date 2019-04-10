@@ -4,20 +4,27 @@ import algorithms.mazeGenerators.Maze;
 
 import java.util.*;
 
+/**
+ * This class is for breadth First Search algorithm
+ * Extends from ASearchingAlgorithm class
+ */
 public class BreadthFirstSearch extends ASearchingAlgorithm {
 
     protected HashSet<AState> visitedPosition;
     protected Queue<AState> statesQueue;
 
+    /**
+     * Default constructor
+     */
     public BreadthFirstSearch() {
         visitedPosition = new HashSet<>();
         statesQueue = new LinkedList<>();
     }
 
     /**
-     * this function is solving the maze by bfs algorithm
+     * this function is solving the maze by this algorithm
      * @param maze to be solved
-     * @return the solution
+     * @return Solution - the solution
      */
     public Solution solve(ISearchable maze){
 
