@@ -1,0 +1,9 @@
+<application>
+  <component name="ParameterNameHintsSettings">
+    <blacklists>
+      <blacklist language="Java">
+        <added pattern="java.io.FileReader.FileReader(fileName)" />
+      </blacklist>
+    </blacklists>
+  </component>
+</application>
