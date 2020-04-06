@@ -1,5 +1,4 @@
 import javafx.util.Pair;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class League {
     public League(LeagueRank leagueRank) {
         this.leagueRank = leagueRank;
 
-        this.seasonLeague = new LinkedList<>();;
+        this.seasonLeague = new LinkedList<>();
         this.teams = new LinkedList<>();
     }
 }

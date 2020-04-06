@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Fan extends User implements Observer {
+public class Fan extends User {
 
     //Fields
     private String name;
@@ -16,8 +16,8 @@ public class Fan extends User implements Observer {
         this.following = new LinkedList<>();
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
+
+    public void update(UserEventMaker o, Object arg) {
 
     }
 }

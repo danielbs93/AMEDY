@@ -1,12 +1,20 @@
-import java.sql.Time;
+
+
+import java.time.LocalTime;
 import java.util.Date;
 
 public class Event {
     private Date date;
-    private Time time;
+    private LocalTime time;
     private int gameMinute;
     private EventType eventType;
 
+    public Event(Date date, LocalTime time, int gameMinute, EventType eventType) {
+        this.date = date;
+        this.time = time;
+        this.gameMinute = gameMinute;
+        this.eventType = eventType;
+    }
 }
 //ENUM
 enum EventType {

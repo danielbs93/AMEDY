@@ -16,4 +16,20 @@ public class Stadium {
         this.teams = new LinkedList<>();
         this.matches = new LinkedList<>();
     }
+
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
+    }
+
+    public List<Match> getMatches() {
+        return matches;
+    }
+
+    public void setMatches(List<Match> matches) {
+        this.matches = matches;
+    }
 }

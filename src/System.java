@@ -7,10 +7,15 @@ public class System
 
     private SystemManager systemManeger;
     private ConcurrentHashMap<String ,User> allUsers;
+    private Authentication authentication;
+
+    public System(Authentication authentication) {
+        this.authentication = authentication;
+    }
 
     public void boot()
     {
-        //TODO: initial SystemManeger
+        //TODO: initial SystemManager
     }
     public void logoutUser(User user)
     {

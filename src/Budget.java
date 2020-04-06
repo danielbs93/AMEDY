@@ -7,7 +7,7 @@ public class Budget {
     private Season season;
     private Team team;
 
-    public Budget(double amount, Season season,Team team) {
+    public Budget(double amount, Season season, Team team) {
         this.amount = amount;
 
         this.season = season;

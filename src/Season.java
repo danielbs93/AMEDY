@@ -12,7 +12,7 @@ public class Season {
     private System system;
     private LeagueRankPolicy leagueRankPolicy;
     private List<Pair<Team, Budget>> teamBudget;
-    private List<Pair<League,SeasonLeagueAssignments>> leagueSeason;
+    private List<Pair<League, SeasonLeagueAssignments>> leagueSeason;
 
     public Season(int year, System system, LeagueRankPolicy leagueRankPolicy) {
         this.year = year;

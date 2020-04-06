@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Player extends UserEventMaker
@@ -8,13 +9,14 @@ public class Player extends UserEventMaker
     private PlayerType playerType;
 
     //Connections
-    private List<Event> event;
+    private List<Event> events;
 
     public Player(String userName, String password, System system, String name, Date birthday, PlayerType playerType) {
         super(userName, password, system, name);
 
         this.birthday = birthday;
         this.playerType = playerType;
+        this.events = new LinkedList<>();
     }
 }
 

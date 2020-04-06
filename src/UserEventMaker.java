@@ -62,7 +62,7 @@ public class UserEventMaker extends User
      * <blockquote><tt>
      * notifyObservers(null)</tt></blockquote>
      *
-     * @see     java.util.Observable#clearChanged()
+     * @see     java.util.Observable*#clearChanged()
      * @see     java.util.Observable#hasChanged()
      * @see     java.util.Observer#update(java.util.Observable, java.lang.Object)
      */
@@ -80,7 +80,7 @@ public class UserEventMaker extends User
      * arguments: this observable object and the <code>arg</code> argument.
      *
      * @param   arg   any object.
-     * @see     java.util.Observable#clearChanged()
+     * @see     java.util.Observable#*clearChanged()
      * @see     java.util.Observable#hasChanged()
      * @see     java.util.Observer#update(java.util.Observable, java.lang.Object)
      */
@@ -111,7 +111,7 @@ public class UserEventMaker extends User
         }
 
         for (int i = arrLocal.length-1; i>=0; i--)
-            ((Observer)arrLocal[i]).update(this, arg);
+            ((Fan)arrLocal[i]).update(this, arg);
     }
 
     /**
@@ -150,8 +150,8 @@ public class UserEventMaker extends User
      *          method has been called more recently than the
      *          <code>clearChanged</code> method on this object;
      *          <code>false</code> otherwise.
-     * @see     java.util.Observable#clearChanged()
-     * @see     java.util.Observable#setChanged()
+     * @see     java.util.Observable#*clearChanged()
+     * @see     java.util.Observable#*setChanged()
      */
     public synchronized boolean hasChanged() {
         return changed;

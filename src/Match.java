@@ -23,7 +23,7 @@ public class Match {
         this.stadium = stadium;
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
-        this.referees = referees;
+        this.referees = referees; //TODO:check if 4
         this.eventDiary = new EventDiary(date,this);
     }
 }

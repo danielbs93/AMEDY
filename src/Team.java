@@ -20,12 +20,12 @@ public class Team {
     private List<Match> awayMatches;
 
 
-    public Team(String teamName, List<Player> players, Coach coach, List<TeamOwner> teamOwners, League league, Stadium homeStadium) {
+    public Team(String teamName, List<Player> players, Coach coach, League league, Stadium homeStadium) {
         this.teamName = teamName;
 
         this.players = players;
         this.coach = coach;
-        this.teamOwners = teamOwners;
+        this.teamOwners = new LinkedList<>();
         this.teamManagers = new LinkedList<TeamManager>();
         this.seasonBudget = new LinkedList<>();
         this.league = league;
