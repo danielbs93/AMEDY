@@ -1,16 +1,11 @@
+import javafx.util.Pair;
+
 import java.util.LinkedList;
 import java.util.List;
 
-public class MatchAssignmentPolicy {
+public interface MatchAssignmentPolicy {
 
-    //Fields
+     LinkedList<Pair<Team,Team>> assginMatches(LinkedList<Team> allTeams);
 
-    //Connections
-    private RepresentativeFootballAssociation rfa;
-    private List<Match> matches; //TODO: we dont need this
 
-    public MatchAssignmentPolicy(RepresentativeFootballAssociation rfa) {
-        this.rfa = rfa;
-        this.matches = new LinkedList<>();
-    }
 }

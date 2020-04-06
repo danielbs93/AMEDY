@@ -1,3 +1,5 @@
+import javafx.util.Pair;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +13,7 @@ public class Team {
     private Coach coach;
     private List<TeamOwner> teamOwners;
     private List<TeamManager> teamManagers;
-    private List<Season> seasons;
+    private List<Pair<Season,Budget>> seasonBudget;
     private League league;
     private Stadium homeStadium;
     private List<Match> homeMatches;
@@ -25,7 +27,7 @@ public class Team {
         this.coach = coach;
         this.teamOwners = teamOwners;
         this.teamManagers = new LinkedList<TeamManager>();
-        this.seasons = new LinkedList<Season>();
+        this.seasonBudget = new LinkedList<>();
         this.league = league;
         this.homeStadium = homeStadium;
         this.homeMatches = new LinkedList<>();

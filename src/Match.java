@@ -14,9 +14,8 @@ public class Match {
     private Team awayTeam;
     private Referee[] referees;
     private EventDiary eventDiary;
-    private MatchAssignmentPolicy matchAssignmentPolicy;
 
-    public Match(Date date, LocalTime time, Stadium stadium, Team homeTeam, Team awayTeam, Referee[] referees, EventDiary eventDiary, MatchAssignmentPolicy matchAssignmentPolicy) {
+    public Match(Date date, LocalTime time, Stadium stadium, Team homeTeam, Team awayTeam, Referee[] referees) {
         this.date = date;
         this.time = time;
         this.score = new Score();
@@ -25,7 +24,6 @@ public class Match {
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.referees = referees;
-        this.eventDiary = eventDiary;
-        this.matchAssignmentPolicy = matchAssignmentPolicy;
+        this.eventDiary = new EventDiary(date,this);
     }
 }

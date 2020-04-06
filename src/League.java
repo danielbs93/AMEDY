@@ -1,3 +1,5 @@
+import javafx.util.Pair;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,16 +9,14 @@ public class League {
     private LeagueRank leagueRank;
 
     //Connections
-    private List<Season> seasons;
+    private List<Pair<Season,SeasonLeagueAssignments>> seasonLeague;
     private List<Team> teams;
-    private List<RepresentativeFootballAssociation> representativeFootballAssociationsList; //TODO: check if we need this
 
     public League(LeagueRank leagueRank) {
         this.leagueRank = leagueRank;
 
-        this.seasons = new LinkedList<>();;
+        this.seasonLeague = new LinkedList<>();;
         this.teams = new LinkedList<>();
-        this.representativeFootballAssociationsList = new LinkedList<>(); //TODO:change
     }
 }
 

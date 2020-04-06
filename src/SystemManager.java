@@ -1,10 +1,10 @@
 import java.util.logging.Logger;
 
-public class SystemManeger extends User
+public class SystemManager extends User
 {
 
 
-    public SystemManeger(String userName, String password, System system)
+    public SystemManager(String userName, String password, System system)
     {
         super(userName, password, system);
 

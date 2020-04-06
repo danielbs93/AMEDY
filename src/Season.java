@@ -11,15 +11,17 @@ public class Season {
     //Connections
     private System system;
     private LeagueRankPolicy leagueRankPolicy;
-    private League league;
     private List<Pair<Team, Budget>> teamBudget;
+    private List<Pair<League,SeasonLeagueAssignments>> leagueSeason;
 
-    public Season(int year, System system, LeagueRankPolicy leagueRankPolicy, League league) {
+    public Season(int year, System system, LeagueRankPolicy leagueRankPolicy) {
         this.year = year;
-
         this.system = system;
         this.leagueRankPolicy = leagueRankPolicy;
-        this.league = league;
         this.teamBudget = new LinkedList<>();
+        leagueSeason = new LinkedList<>();
     }
+
+
+    //TODO: assigning matches after using MatchAssigningPolicy
 }

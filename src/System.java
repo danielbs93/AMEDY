@@ -1,16 +1,11 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 public class System
 {
 
 //    public static Logger systemLogger = new Logger(); //TODO: initial the logger correctly
 
-    private SystemManeger systemManeger;
+    private SystemManager systemManeger;
     private ConcurrentHashMap<String ,User> allUsers;
 
     public void boot()
