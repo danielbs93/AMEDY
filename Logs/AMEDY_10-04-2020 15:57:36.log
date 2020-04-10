@@ -1,2 +1,0 @@
-Apr 10, 2020 3:57:47 PM CRUD insertQuery
-WARNING: org.sqlite.SQLiteException: [SQLITE_CONSTRAINT]  Abort due to constraint violation (UNIQUE constraint failed: Users.username)
