@@ -3,9 +3,9 @@ public class Guest {
     //Fields
 
     //Connections
-    private System system;
+    private AMEDYSystem AMEDYSystem;
 
-    public Guest(System system) {
-        this.system = system;
+    public Guest(AMEDYSystem AMEDYSystem) {
+        this.AMEDYSystem = AMEDYSystem;
     }
 }

@@ -11,9 +11,9 @@ public class UserEventMaker extends User
     private Vector<Observer> obs;
 
     /** Construct an Observable with zero Observers. */
-    public UserEventMaker(String userName, String password, System system,String name)
+    public UserEventMaker(String userName, String password, AMEDYSystem AMEDYSystem, String name)
     {
-        super(userName, password, system);
+        super(userName, password, AMEDYSystem);
 
         this.name = name;
         obs = new Vector<>();

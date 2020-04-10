@@ -1,12 +1,10 @@
-import java.util.logging.Logger;
-
 public class SystemManager extends User
 {
 
 
-    public SystemManager(String userName, String password, System system)
+    public SystemManager(String userName, String password, AMEDYSystem AMEDYSystem)
     {
-        super(userName, password, system);
+        super(userName, password, AMEDYSystem);
 
     }
 

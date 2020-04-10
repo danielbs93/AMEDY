@@ -9,14 +9,14 @@ public class Season {
     private int year;
 
     //Connections
-    private System system;
+    private AMEDYSystem AMEDYSystem;
     private LeagueRankPolicy leagueRankPolicy;
     private List<Pair<Team, Budget>> teamBudget;
     private List<Pair<League, SeasonLeagueAssignments>> leagueSeason;
 
-    public Season(int year, System system, LeagueRankPolicy leagueRankPolicy) {
+    public Season(int year, AMEDYSystem AMEDYSystem, LeagueRankPolicy leagueRankPolicy) {
         this.year = year;
-        this.system = system;
+        this.AMEDYSystem = AMEDYSystem;
         this.leagueRankPolicy = leagueRankPolicy;
         this.teamBudget = new LinkedList<>();
         leagueSeason = new LinkedList<>();

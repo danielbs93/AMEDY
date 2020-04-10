@@ -11,8 +11,8 @@ public class Player extends UserEventMaker
     //Connections
     private List<Event> events;
 
-    public Player(String userName, String password, System system, String name, Date birthday, PlayerType playerType) {
-        super(userName, password, system, name);
+    public Player(String userName, String password, AMEDYSystem AMEDYSystem, String name, Date birthday, PlayerType playerType) {
+        super(userName, password, AMEDYSystem, name);
 
         this.birthday = birthday;
         this.playerType = playerType;
