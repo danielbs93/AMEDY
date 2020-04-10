@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
@@ -268,6 +269,11 @@ public class AMEDYSystem
         FileHandler fh;
 
         try {
+            File directory = new  File("Logs/");
+            if(!directory.exists()) {
+                directory.mkdir();
+            }
+
             fh = new FileHandler(String.format("Logs/%s", fileName));
             log.addHandler(fh);
 
