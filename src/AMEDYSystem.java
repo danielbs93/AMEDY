@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.*;
 import java.text.SimpleDateFormat;
@@ -11,73 +13,16 @@ public class AMEDYSystem
 {
     static Logger systemLogger = createLogger("AMEDY", Level.WARNING, true, true);
 
-    private static Map<String, Integer> premissions = new HashMap<String, Integer>()
-    {{
-        put("CREATE", 2);
-        put("READ", 3);
-        put("UPDATE", 5);
-        put("DELETE", 7);
-
-//        //CREATE
-//        put("CREATE_USER", 3);
-//        put("CREATE_TEAM", 5);
-//        put("CREATE_LEAGUE", 7);
-//        put("CREATE_EVENT", 11);
-//        put("CREATE_POLICY", 13);
-//        put("CREATE_LEAGUE_RANK", 17);
-//        put("CREATE_SEASON", 23);
-//        put("CREATE_STADIUM", 29);
-//        put("CREATE_MATCH", 31);
-//        put("CREATE_BUDGET", 37);
-//
-//        //READ
-//        put("READ_SYSTEM", 41);
-//        put("READ_USER", 43);
-//
-//        //UPDATE
-//        put("UPDATE_USER", 47);
-//        put("UPDATE_TEAM", 53);
-//        put("UPDATE_LEAGUE", 59);
-//        put("UPDATE_EVENT", 61);
-//        put("UPDATE_POLICY", 67);
-//        put("UPDATE_LEAGUE_RANK", 71);
-//        put("UPDATE_SEASON", 73);
-//        put("UPDATE_STADIUM", 79);
-//        put("UPDATE_MATCH", 83);
-//        put("UPDATE_BUDGET", 89);
-//
-//        //DELETE
-//        put("DELETE_USER", 97);
-//        put("DELETE_TEAM", 101);
-//        put("DELETE_LEAGUE", 103);
-//        put("DELETE_EVENT", 107);
-//        put("DELETE_POLICY", 109);
-//        put("DELETE_LEAGUE_RANK", 113);
-//        put("DELETE_SEASON", 127);
-//        put("DELETE_STADIUM", 131);
-//        put("DELETE_MATCH", 137);
-//        put("DELETE_BUDGET", 139);
-    }};
-
-    private static Map<String, Integer> userPremissions = new HashMap<String, Integer>()
-    {{
-        put("System", premissions.get("CREATE") * premissions.get("READ") * premissions.get("UPDATE") * premissions.get("DELETE"));
-
-        put("SystemManager", premissions.get("CREATE") * premissions.get("READ") * premissions.get("UPDATE") * premissions.get("DELETE"));
-        put("Fan", premissions.get("READ"));
-        put("RFA", premissions.get("CREATE") * premissions.get("READ") * premissions.get("UPDATE") * premissions.get("DELETE"));
-        put("Referee", premissions.get("CREATE") * premissions.get("READ") * premissions.get("UPDATE") * premissions.get("DELETE"));
-        put("Player", premissions.get("READ") * premissions.get("UPDATE"));
-        put("Coach", premissions.get("READ"));
-        put("TeamOwner", premissions.get("READ") * premissions.get("UPDATE"));
-        put("TeamManager", premissions.get("READ") * premissions.get("UPDATE"));
-    }};
-
     private SystemManager systemManeger;
     private ConcurrentHashMap<String ,User> allUsers;
     private Authentication authentication;
     private DataBase database;
 
+    /***
+     * Constructor.
+     *
+     * @param authentication authentication system to will use to verify users.
+     */
     public AMEDYSystem(Authentication authentication)
     {
         this.authentication = authentication;
@@ -128,6 +73,9 @@ public class AMEDYSystem
 
             } else {
                 AMEDYSystem.systemLogger.warning("failed to register system manager");
+
+                AMEDYSystem.systemLogger.info("trying ti get system manager from user again");
+                userAnswer = GetDetailsFromUser(systemManagerFillDetails);
             }
         }
 
@@ -303,33 +251,30 @@ public class AMEDYSystem
                 return false;
             }
         }
-        List<String> params = new ArrayList<String>(){{
-           add("username"));
+        List<Pair> params = new ArrayList<Pair>(){{
+           add(new Pair("username", username));
         }};
 
         ResultSet results = CRUD.select("System","Users",params);
-        int size = 0;
-        if (results != null)
-        {
-            try
-            {
-                results.last();    // moves cursor to the last row
-                size = results.getRow(); // get row id
-            }
-            catch(SQLException e)
-            {
-                e.printStackTrace();
-            }
+
+        boolean emptyResultSet;
+
+        try {
+            emptyResultSet = results.next();
+
+        } catch (SQLException e) {
+            emptyResultSet = true;
         }
-        if(size == 0)
+
+        if (emptyResultSet)
         {
             systemLogger.info("[AMEDYsystem][verifyUsername] - username inserted by user is already exist in the system.");
             System.out.println("this username is already exist in the system.");
+
             return false;
         }
 
         return true;
-
     }
 
     /***
@@ -384,7 +329,37 @@ public class AMEDYSystem
     }
 
     private boolean RegisterUserToDB(List userAnswer) {
-        return CRUD.createUser("System", userAnswer);
+
+        if(verifyDetails(userAnswer)) {
+            return CRUD.createUser("System", userAnswer);
+        }
+
+        return false;
+    }
+
+    private boolean verifyDetails(List userAnswer) {
+
+        boolean valid = true;
+
+        if( userAnswer == null) {
+            return false;
+        }
+
+        for(int i = 0 ; i < userAnswer.size(); i++) {
+            String field = ((Pair)userAnswer.get(i)).getKey();
+
+            if(field.toLowerCase().equals("username")) {
+                valid = valid && verifyUsername(((Pair) userAnswer.get(i)).getValue());
+            }
+            else if(field.toLowerCase().equals("password")) {
+                valid = valid && verifyPassword(((Pair) userAnswer.get(i)).getValue(), ((Pair) userAnswer.get(i)).getValue()); //TODO: change to two different password from the user.
+            }
+            else if(field.toLowerCase().equals("name")) {
+                valid = valid && verifyName(((Pair) userAnswer.get(i)).getValue());
+            }
+        }
+
+        return valid;
     }
 
     private boolean SetAuthorization(String username, String userType) {
