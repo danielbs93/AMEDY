@@ -179,8 +179,156 @@ public class AMEDYSystem
 
     }
 
-    public void signUpUser(String userName, String password)
+    /**
+     * Use-Case 2.2
+     * registering a new user to the system. the new user will be a fan user.
+     */
+    public void signup()
     {
+        systemLogger.info("[AMEDYsystem][signup] entered signup method - taking username argument from user...");
+        Scanner sc = new Scanner(System.in);
+        System.out.println("enter username");
+        String username = sc.nextLine();
+        while(!verifyUsername(username))
+        {
+            systemLogger.info("[AMEDYsystem][signup] - user entered invalid username - trying again to take username.");
+            System.out.println("please enter a new username:");
+            username = sc.nextLine();
+        }
+        systemLogger.info("[AMEDYsystem][signup] - succeeded taking username from user - taking password argument from user.");
+        System.out.println("please enter password:");
+        String password = sc.nextLine();
+        System.out.println("please re-enter your password:");
+        String reEnterPassword = sc.next();
+        while(!verifyPassword(password, reEnterPassword))
+        {
+            systemLogger.info("[AMEDYsystem][signup] -user inserted invalid password - trying to take password argument from user.");
+            System.out.println("please enter password:");
+            password = sc.nextLine();
+            System.out.println("please re-enter your password:");
+            reEnterPassword = sc.next();
+        }
+        systemLogger.info("[AMEDYsystem][signup] -succeeded taking password from user - taking name argument from user.");
+        System.out.println("please enter your name:");
+        String name = sc.nextLine();
+
+        while(!verifyName(name))
+        {
+            systemLogger.info("[AMEDYsystem][signup] -user inserted invalid name - trying again to take name argument from user.");
+            System.out.println("please enter your name:");
+            name = sc.nextLine();
+        }
+        String finalUsername = username;
+        String finalPassword = password;
+        String finalName = name;
+        List<Pair> data = new ArrayList<Pair>(){{
+            add(new Pair("userType","Fan"));
+           add(new Pair("username", finalUsername));
+           add(new Pair("password", finalPassword));
+           add(new Pair("name", finalName));
+        }};
+
+        systemLogger.info("[AMEDYsystem][signup] - signing the new user to the DataBase.");
+        CRUD.createUser("System", data);
+        systemLogger.info("[AMEDYsystem][signup] - assigning authorizations to the new user.");
+        CRUD.createAuthorization("System", username, "Fan");
+    }
+
+
+    /**
+     * the method checks if the name inserted bvy the user is at list 2 characters and conatins only a-zA-Z characters.
+     * @param name - String. the name inserted by the user.
+     * @return false - if the name is invalid, else - return true.
+     */
+    private boolean verifyName(String name)
+    {
+        if(name.length() <= 1)
+        {
+            systemLogger.info("[AMEDYsystem][verifyName] - name inserted by the users is too short.");
+            System.out.println("name have to be at list 2 characters long.");
+            return false;
+        }
+        if(!(name.matches("[a-zA-Z]+")))
+        {
+            systemLogger.info("[AMEDYsystem][verifyName] - name inserted by the users contains other characters than a-zA-Z.");
+            System.out.println("name have to be only characters a-zA-Z.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     *the method checks if the inserted password by the user is at list 6 characters long and he entered the password twice correctly.
+     * @param password - String. the first time the user entered his password.
+     * @param reEnterPassword - String. the second time the user entered his password.
+     * @return false - if the the password is invalid, else - return true.
+     */
+    private boolean verifyPassword(String password, String reEnterPassword)
+    {
+        if(password.length() < 6)
+        {
+            systemLogger.info("[AMEDYsystem][verifyPassword] - passwords inserted by the users is too short.");
+            System.out.println("password have to be at list 6 characters long");
+        }
+        if(!password.equals(reEnterPassword))
+        {
+            systemLogger.info("[AMEDYsystem][verifyPassword] - passwords inserted by the users doesnt match.");
+            System.out.println("passwords doesnt match.");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *the method checks if the username inserted by the user is at list 6 characters long and doesnt contains spaces.
+     * @param username - String. the username inserted by the user.
+     * @return false - if the username is invalid. else - return true.
+     */
+    private boolean verifyUsername(String username)
+    {
+        if(username.length() < 6 )
+        {
+            systemLogger.info("[AMEDYsystem][verifyUsername] - username inserted by user was too short.");
+            System.out.println("username is too short.");
+            return false;
+        }
+
+        for(char ch: username.toCharArray())
+        {
+            if (ch == ' ')
+            {
+                systemLogger.info("[AMEDYsystem][verifyUsername] - username inserted by user included spaces.");
+                System.out.println("spaces is not allowed.");
+                return false;
+            }
+        }
+        List<String> params = new ArrayList<String>(){{
+           add("username"));
+        }};
+
+        ResultSet results = CRUD.select("System","Users",params);
+        int size = 0;
+        if (results != null)
+        {
+            try
+            {
+                results.last();    // moves cursor to the last row
+                size = results.getRow(); // get row id
+            }
+            catch(SQLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        if(size == 0)
+        {
+            systemLogger.info("[AMEDYsystem][verifyUsername] - username inserted by user is already exist in the system.");
+            System.out.println("this username is already exist in the system.");
+            return false;
+        }
+
+        return true;
 
     }
 

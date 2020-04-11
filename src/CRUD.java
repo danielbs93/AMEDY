@@ -102,7 +102,7 @@ public class CRUD {
         if(ableToAddUser.contains(askBy)) {
 
             return (ResultSet)selectQuery(table, params);
-            
+
         }
 
         return null;
@@ -211,30 +211,33 @@ public class CRUD {
 
             stmt = conn.createStatement();
 
-            String firstRow = "";
+            String firstRow = "SELECT *";
             String secondRow = " FROM " + table;
 
             if(params != null) {
 
-                firstRow = "SELECT (";
+                String thirdRow = " WHERE ";
+
+                //firstRow = "SELECT (";
 
                 for(int i = 0 ; i < params.size(); i++) {
 
-                    String str = (String)params.get(i);
+                    Pair pair = (Pair)params.get(i);
 
                     if(i + 1 < params.size() ) {
-                        firstRow += str + ", ";
+                        thirdRow += String.format("%s='%s', ",pair.getKey(), pair.getValue());
                     }
                     else {
-                        firstRow += str + ")";
+                        thirdRow += String.format("%s='%s'",pair.getKey(), pair.getValue());
                     }
                 }
+
+                query = firstRow + secondRow + thirdRow;
             }
             else {
-                firstRow = "SELECT *";
+                query = firstRow + secondRow;
             }
 
-            query = firstRow + secondRow;
 
             //execute
             result = stmt.executeQuery(query);
