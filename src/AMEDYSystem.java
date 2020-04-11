@@ -287,6 +287,7 @@ public class AMEDYSystem
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     return log;
     }
 }
