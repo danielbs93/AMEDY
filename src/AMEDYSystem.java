@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.*;
 import java.util.logging.*;
 import java.text.SimpleDateFormat;
@@ -14,7 +15,7 @@ public class AMEDYSystem
     static Logger systemLogger = createLogger("AMEDY", Level.WARNING, true, true);
 
     private SystemManager systemManeger;
-    private ConcurrentHashMap<String ,User> allUsers;
+    private ConcurrentHashMap<String ,User> allUsersLoggedIn;
     private Authentication authentication;
     private DataBase database;
 
@@ -27,11 +28,12 @@ public class AMEDYSystem
     {
         this.authentication = authentication;
         this.database = authentication.getDB();
+        this.allUsersLoggedIn = new ConcurrentHashMap<>();
     }
 
     /***
      * First system initialization.
-     * In this process the syste will ask for System Manager Details.
+     * In this process the system will ask for System Manager Details.
      * 
      * @UC 1.1
      */
@@ -69,15 +71,16 @@ public class AMEDYSystem
 
             if (userRegister = RegisterUserToDB(userAnswer)) {
 
-                AMEDYSystem.systemLogger.info("register system manager successfully");
+                AMEDYSystem.systemLogger.info("register system manager successfully.");
 
             } else {
-                AMEDYSystem.systemLogger.warning("failed to register system manager");
+                AMEDYSystem.systemLogger.warning("failed to register system manager.");
 
-                AMEDYSystem.systemLogger.info("trying ti get system manager from user again");
+                AMEDYSystem.systemLogger.info("trying to get system manager from user again.");
                 userAnswer = GetDetailsFromUser(systemManagerFillDetails);
             }
         }
+
 
         //Assign authorization
         AMEDYSystem.systemLogger.info("set system manager authorization");
@@ -131,13 +134,13 @@ public class AMEDYSystem
      * Use-Case 2.2
      * registering a new user to the system. the new user will be a fan user.
      */
-    public void signup()
+    public User signup()
     {
         systemLogger.info("[AMEDYsystem][signup] entered signup method - taking username argument from user...");
         Scanner sc = new Scanner(System.in);
-        System.out.println("enter username");
+        System.out.println("enter username:");
         String username = sc.nextLine();
-        while(!verifyUsername(username))
+        while(!verifyUsername(username) && !checkIfUserExistInDB(username))
         {
             systemLogger.info("[AMEDYsystem][signup] - user entered invalid username - trying again to take username.");
             System.out.println("please enter a new username:");
@@ -147,14 +150,14 @@ public class AMEDYSystem
         System.out.println("please enter password:");
         String password = sc.nextLine();
         System.out.println("please re-enter your password:");
-        String reEnterPassword = sc.next();
+        String reEnterPassword = sc.nextLine();
         while(!verifyPassword(password, reEnterPassword))
         {
             systemLogger.info("[AMEDYsystem][signup] -user inserted invalid password - trying to take password argument from user.");
             System.out.println("please enter password:");
             password = sc.nextLine();
             System.out.println("please re-enter your password:");
-            reEnterPassword = sc.next();
+            reEnterPassword = sc.nextLine();
         }
         systemLogger.info("[AMEDYsystem][signup] -succeeded taking password from user - taking name argument from user.");
         System.out.println("please enter your name:");
@@ -166,6 +169,7 @@ public class AMEDYSystem
             System.out.println("please enter your name:");
             name = sc.nextLine();
         }
+        systemLogger.info("[AMEDYsystem][signup] succeeded taking name from user.");
         String finalUsername = username;
         String finalPassword = password;
         String finalName = name;
@@ -180,6 +184,10 @@ public class AMEDYSystem
         CRUD.createUser("System", data);
         systemLogger.info("[AMEDYsystem][signup] - assigning authorizations to the new user.");
         CRUD.createAuthorization("System", username, "Fan");
+
+        Fan newFan = new Fan(username, password, this, name);
+        this.allUsersLoggedIn.put(username, newFan);
+        return newFan;
     }
 
 
@@ -216,7 +224,8 @@ public class AMEDYSystem
         if(password.length() < 6)
         {
             systemLogger.info("[AMEDYsystem][verifyPassword] - passwords inserted by the users is too short.");
-            System.out.println("password have to be at list 6 characters long");
+            System.out.println("password have to be at list 6 characters long.");
+            return false;
         }
         if(!password.equals(reEnterPassword))
         {
@@ -229,52 +238,58 @@ public class AMEDYSystem
     }
 
     /**
-     *the method checks if the username inserted by the user is at list 6 characters long and doesnt contains spaces.
+     *the method checks if the username inserted by the user is at list 4 characters long and doesnt contains spaces.
      * @param username - String. the username inserted by the user.
      * @return false - if the username is invalid. else - return true.
      */
     private boolean verifyUsername(String username)
     {
-        if(username.length() < 6 )
+        if(username.length() < 4 )
         {
             systemLogger.info("[AMEDYsystem][verifyUsername] - username inserted by user was too short.");
             System.out.println("username is too short.");
             return false;
         }
 
-        for(char ch: username.toCharArray())
+
+        if(!(username.matches("^[a-zA-Z0-9]+$")))
         {
-            if (ch == ' ')
-            {
-                systemLogger.info("[AMEDYsystem][verifyUsername] - username inserted by user included spaces.");
-                System.out.println("spaces is not allowed.");
-                return false;
-            }
-        }
-        List<Pair> params = new ArrayList<Pair>(){{
-           add(new Pair("username", username));
-        }};
-
-        ResultSet results = CRUD.select("System","Users",params);
-
-        boolean emptyResultSet;
-
-        try {
-            emptyResultSet = results.next();
-
-        } catch (SQLException e) {
-            emptyResultSet = true;
-        }
-
-        if (emptyResultSet)
-        {
-            systemLogger.info("[AMEDYsystem][verifyUsername] - username inserted by user is already exist in the system.");
-            System.out.println("this username is already exist in the system.");
-
+            systemLogger.info("[AMEDYsystem][verifyUsername] - username inserted by user included spaces.");
+            System.out.println("only words and numbers are allowed for username.");
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * the method checks in the database if the inserted username inserted by the user exist in the Database.
+     * @param username - String. the username the user inserted.
+     * @return true - if the inserted username exist. else - false.
+     */
+    private boolean checkIfUserExistInDB(String username)
+    {
+        systemLogger.info("[AMEDYsystem][checkIfUserExistInDB] - entered the method.");
+        List<Pair> params = new ArrayList<Pair>(){{
+            add(new Pair("username", username));
+        }};
+
+        systemLogger.info("[AMEDYsystem][checkIfUserExistInDB] - checks if the user" +  username + " exist in the Database.");
+        List results = CRUD.select("System","Users",params);
+
+
+        if(results.size() > 1)
+        {
+            //TODO: to delete later - its for checking that there is no duplicates username in the database
+            systemLogger.warning("[AMEDYsystem][checkIfUserExistInDB] -the username: '"+ username +"' show more than 1 time in the database.");
+        }
+        if (results.size() == 1)
+        {
+            systemLogger.info("[AMEDYsystem][checkIfUserExistInDB] -the inserted username '"+ username +"' by user is already exist in the system.");
+
+            return true;
+        }
+        return false;
     }
 
     /***
@@ -325,6 +340,7 @@ public class AMEDYSystem
             userAnswer.add(entry);
         }
 
+
         return userAnswer;
     }
 
@@ -345,17 +361,19 @@ public class AMEDYSystem
             return false;
         }
 
-        for(int i = 0 ; i < userAnswer.size(); i++) {
+        for(int i = 0 ; i < userAnswer.size(); i++)
+        {
             String field = ((Pair)userAnswer.get(i)).getKey();
+            String field2 = ((Pair) userAnswer.get(i)).getValue();
 
             if(field.toLowerCase().equals("username")) {
-                valid = valid && verifyUsername(((Pair) userAnswer.get(i)).getValue());
+                valid = valid && verifyUsername(field2) && !checkIfUserExistInDB(field2);
             }
             else if(field.toLowerCase().equals("password")) {
-                valid = valid && verifyPassword(((Pair) userAnswer.get(i)).getValue(), ((Pair) userAnswer.get(i)).getValue()); //TODO: change to two different password from the user.
+                valid = valid && verifyPassword(field2, field2); //TODO: change to two different password from the user.
             }
             else if(field.toLowerCase().equals("name")) {
-                valid = valid && verifyName(((Pair) userAnswer.get(i)).getValue());
+                valid = valid && verifyName(field2);
             }
         }
 
@@ -397,7 +415,7 @@ public class AMEDYSystem
                 directory.mkdir();
             }
 
-            fh = new FileHandler(String.format("Logs/%s", fileName));
+            fh = new FileHandler(String.format("Logs/%s", "logger"));
             log.addHandler(fh);
 
             if(!printToConsole) {
@@ -413,4 +431,158 @@ public class AMEDYSystem
 
     return log;
     }
+
+    /**
+     * the method responsible on logging in peoples who already have an account.
+     * @return
+     */
+    public User signin()
+    {
+        systemLogger.info("[AMEDYsystem][signin] - entered method.");
+        List<Pair> data = null;
+
+        Pair usernameAndPass = getUsernameAndPassFromUser();
+        String username = usernameAndPass.getKey();
+        String password = usernameAndPass.getValue();
+
+        systemLogger.info("[AMEDYsystem][signin] - checking inserted username and password.");
+
+        boolean isUsernameAndPassValidate = false;
+
+        while (!isUsernameAndPassValidate)
+        {
+            if (!verifyUsername(username) || !checkIfUserExistInDB(username))
+            {
+
+                System.out.println("invalid username or password.");
+                usernameAndPass = getUsernameAndPassFromUser();
+                username = usernameAndPass.getKey();
+                password = usernameAndPass.getValue();
+                continue;
+            }
+
+            String finalUsername = username;
+            List<Pair> params = new ArrayList<Pair>() {{
+                add(new Pair("username", finalUsername));
+            }};
+
+
+            List<List<Pair>> result = CRUD.select("System", "Users", params);
+            if(result.size() != 1)
+            {
+                systemLogger.warning("[AMEDYsystem][signin] - we have at list 2 users with the same username: " + username);
+                return null;
+            }
+
+
+            data = result.get(0);
+            String passwordInDatabase = "";
+            for(Pair currentCulumnData : data)
+            {
+                if(currentCulumnData.getKey().equals("password"))
+                {
+                    passwordInDatabase = currentCulumnData.getValue();
+                    break;
+                }
+            }
+
+
+            if (password.equals(passwordInDatabase))
+            {
+                isUsernameAndPassValidate = true;
+            }
+            else
+            {
+                System.out.println("invalid username or password.");
+                usernameAndPass = getUsernameAndPassFromUser();
+                username = usernameAndPass.getKey();
+                password = usernameAndPass.getValue();
+            }
+        }
+        systemLogger.info("[AMEDYsystem][signin] - username: "+ username + " and password: " + password + "are correct and exist in the database.");
+
+        systemLogger.info("[AMEDYsystem][signin] - generating the instance of the chosen User.");
+
+        User user = generateUserNameFromDataBase(data);
+        allUsersLoggedIn.put(user.getUserName(), user);
+        return user;
+    }
+
+    /**
+     * the method generate the needed username from the database
+     * @param data
+     * @return
+     */
+    private User generateUserNameFromDataBase(List<Pair> data)
+    {
+        String userType = data.get(0).getValue();
+        String username = data.get(1).getValue();
+        String password = data.get(2).getValue();
+        String name = data.get(3).getValue();
+
+        if(userType.equals("TeamOwner"))
+        {
+            return new TeamOwner(username,password,this, name, null); //TODO: TeamOwner need Team to initialize;
+        }
+        else if(userType.equals("TeamManager"))
+        {
+            return  new TeamManager(username, password, this, name, null); //TODO: TeamManager need Team to initialize;
+        }
+        else if(userType.equals("RepresentativeFootballAssociation"))
+        {
+            return new RepresentativeFootballAssociation(username, password, this, name);
+        }
+        else if(userType.equals("Referee"))
+        {
+
+            return new Referee(username,password, this, name, RefereeType.valueOf(data.get(4).getValue()) );
+        }
+        else if(userType.equals("Player"))
+        {
+            String playerDateString = data.get(5).getValue();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+            Date playerDateFormat = null;
+            try {
+
+                playerDateFormat = formatter.parse(playerDateString);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+            return new Player(username, password, this, name, playerDateFormat, PlayerType.Defender.valueOf(data.get(6).getValue()) );
+        }
+        else if(userType.equals("Fan"))
+        {
+            return new Fan(username, password, this, name);
+        }
+        else if(userType.equals("Coach"))
+        {
+            return new Coach(username, password, this, name, data.get(6).getValue() );
+        }
+        else if(userType.equals("SystemManager"))
+        {
+            return new SystemManager(username, password, this); //TODO: add to Users table in the db that UserType for system manager will SystemManager (its null now).
+        }
+        return null;
+
+    }
+
+
+    /**
+     * the method take a username and password from the user.
+     * @return Pair: key - username, value - password.
+     */
+    private Pair getUsernameAndPassFromUser()
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("please insert your username:");
+        String username = sc.nextLine();
+        System.out.println("please insert your password:");
+        String password = sc.nextLine();
+        return new Pair(username, password);
+    }
+
 }
