@@ -522,11 +522,11 @@ public class AMEDYSystem
 
         if(userType.equals("TeamOwner"))
         {
-            return new TeamOwner(username,password,this, name, null); //TODO: TeamOwner need Team to initialize;
+            return new TeamOwner(username,password,this, name, null); //TODO: TeamOwner need Team to initialize.
         }
         else if(userType.equals("TeamManager"))
         {
-            return  new TeamManager(username, password, this, name, null); //TODO: TeamManager need Team to initialize;
+            return  new TeamManager(username, password, this, name, null); //TODO: TeamManager need Team to initialize.
         }
         else if(userType.equals("RepresentativeFootballAssociation"))
         {

@@ -8,4 +8,9 @@ public class TeamManager extends UserEventMaker {
 
         this.team = team;
     }
+
+    @Override
+    protected String getUserType() {
+        return "TeamManager";
+    }
 }

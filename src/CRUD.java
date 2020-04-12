@@ -1,6 +1,8 @@
+import org.sqlite.jdbc4.JDBC4ResultSet;
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CRUD {
 
@@ -92,7 +94,7 @@ public class CRUD {
     /***
      *
      */
-    public static ResultSet select(String askBy, String table, List params) {
+    public static List select(String askBy, String table, List params) {
 
         List<String> ableToAddUser = new ArrayList<String>() {{
             add("System");
@@ -101,7 +103,7 @@ public class CRUD {
 
         if(ableToAddUser.contains(askBy)) {
 
-            return (ResultSet)selectQuery(table, params);
+            return selectQuery(table, params);
 
         }
 
@@ -193,11 +195,12 @@ public class CRUD {
     }
 
     //SELECT
-    private static Object selectQuery(String table, List params) {
+    private static List selectQuery(String table, List params) {
 
         Connection conn = null;
         Statement stmt = null;
         ResultSet result = null;
+        List<List<Pair>> allResults = new ArrayList<>();
 
         try{
             //STEP 3: Open a connection
@@ -241,6 +244,19 @@ public class CRUD {
 
             //execute
             result = stmt.executeQuery(query);
+
+
+            while(result.next())
+            {
+                List<Pair> currentRowData = new ArrayList<>();
+                for(int i = 1; i <= ((JDBC4ResultSet) result).getColumnCount(); i++ )
+                {
+                    String columnName = ((JDBC4ResultSet) result).getColumnLabel(i);
+                    String fieldData = result.getString(i);
+                    currentRowData.add(new Pair(columnName, fieldData));
+                }
+                allResults.add(currentRowData);
+            }
         }
         catch(SQLException se){
             //Handle errors for JDBC
@@ -258,7 +274,7 @@ public class CRUD {
                 if (stmt != null) {
 
                     conn.close();
-                    return result;
+                    return allResults;
                 }
 
             } catch (SQLException se) {

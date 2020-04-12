@@ -5,7 +5,8 @@ public class Guest {
     //Connections
     private AMEDYSystem AMEDYSystem;
 
-    public Guest(AMEDYSystem AMEDYSystem) {
+    public Guest(AMEDYSystem AMEDYSystem)
+    {
         this.AMEDYSystem = AMEDYSystem;
     }
 }

@@ -7,4 +7,9 @@ public class Coach extends UserEventMaker
 
         this.qualification = qualification;
     }
+
+    @Override
+    protected String getUserType() {
+        return "Coach";
+    }
 }

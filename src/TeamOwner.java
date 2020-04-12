@@ -8,4 +8,9 @@ public class TeamOwner extends UserEventMaker {
 
         this.team = team;
     }
+
+    @Override
+    protected String getUserType() {
+        return "TeamOwner";
+    }
 }

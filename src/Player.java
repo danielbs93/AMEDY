@@ -18,6 +18,11 @@ public class Player extends UserEventMaker
         this.playerType = playerType;
         this.events = new LinkedList<>();
     }
+
+    @Override
+    protected String getUserType() {
+        return "Player";
+    }
 }
 
 //enum

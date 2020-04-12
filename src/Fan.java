@@ -16,6 +16,13 @@ public class Fan extends User {
     }
 
 
-    public void update(UserEventMaker o, Object arg) {
+    public void update(UserEventMaker o, Object arg)
+    {
+
+    }
+
+    @Override
+    protected String getUserType() {
+        return "Fan";
     }
 }

@@ -12,10 +12,15 @@ public abstract class User
         this.AMEDYSystem = AMEDYSystem;
     }
 
-    private void logout()
+    protected void logout()
     {
         this.AMEDYSystem.logoutUser(this);
     }
 
+    public String getUserName()
+    {
+        return this.userName;
+    }
 
+    protected abstract String getUserType();
 }

@@ -1,7 +1,7 @@
 import java.util.Observer;
 import java.util.Vector;
 
-public class UserEventMaker extends User
+public abstract class UserEventMaker extends User
 {
     //Fields
     private String name;
@@ -165,4 +165,7 @@ public class UserEventMaker extends User
     public synchronized int countObservers() {
         return obs.size();
     }
+
+    @Override
+    protected abstract String getUserType();
 }

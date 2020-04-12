@@ -8,6 +8,11 @@ public class SystemManager extends User
 
     }
 
+    @Override
+    protected String getUserType() {
+        return "SystemManager";
+    }
+
     private void closeampermanent(Team team)
     {
 

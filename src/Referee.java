@@ -7,6 +7,11 @@ public class Referee extends UserEventMaker
 
         this.type = refereeType;
     }
+
+    @Override
+    protected String getUserType() {
+        return "Referee";
+    }
 }
 
 //RefereeType enum
