@@ -331,7 +331,7 @@ public class main {
 
         while(true)
         {
-            System.out.println("you are now logged in as Fan " + refereeUser.getUserName() +" (Referee).");
+            System.out.println("you are now logged in as " + refereeUser.getUserName() +" (Referee).");
             System.out.println("choose one of the next options:");
             System.out.println("" +
                     "1. add event to match.\n" +
